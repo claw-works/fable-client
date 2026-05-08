@@ -79,10 +79,10 @@ func _on_agent_updated(state: Dictionary) -> void:
 	if dialogue != null and str(dialogue) != "":
 		_add_log("[color=#f0c060]%s：[/color]%s" % [name_str, str(dialogue)])
 
-	# 想法（上帝视角，小字）
+	# 想法（上帝视角）
 	var thought: String = state.get("inner_thought", "")
 	if not thought.is_empty():
-		_add_log("[color=#666666][i]  （%s心想：%s）[/i][/color]" % [name_str, thought])
+		_add_log("[color=#b8a0d0]（%s心想：%s）[/color]" % [name_str, thought])
 
 	# 关系变化
 	var changes: Array = state.get("relation_changes", [])
