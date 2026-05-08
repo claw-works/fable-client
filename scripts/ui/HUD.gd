@@ -79,24 +79,31 @@ func _on_agent_updated(state: Dictionary) -> void:
 	if dialogue != null and str(dialogue) != "":
 		_add_log("[color=#f0c060]%s：[/color]%s" % [name_str, str(dialogue)])
 
-	# 想法（上帝视角）
+	# 想法（上帝视角，小字）
 	var thought: String = state.get("inner_thought", "")
 	if not thought.is_empty():
-		_add_log("[color=#666666][i]（%s心想：%s）[/i][/color]" % [name_str, thought])
+		_add_log("[font_size=9][color=#666666][i]（%s心想：%s）[/i][/color][/font_size]" % [name_str, thought])
 
 	# 关系变化
 	var changes: Array = state.get("relation_changes", [])
 	for change in changes:
-		var target_name: String = change.get("target_name", change.get("target_id", "?"))
+		var target_id: String = change.get("target_id", "")
+		var target_cfg: Dictionary = GameState.get_agent_config(target_id)
+		var target_name: String = target_cfg.get("name", change.get("target_name", target_id))
+		if target_id == "player":
+			target_name = GameState.player_config.get("name", "玩家")
 		var delta: int = change.get("delta", 0)
 		var reason: String = change.get("reason", "")
 		var sign_str := "+" if delta > 0 else ""
 		var color := "#88ff88" if delta > 0 else "#ff8888"
+		if delta == 0:
+			color = "#aaaaaa"
 		var text := "[color=%s]💫 %s 对 %s 的好感度 %s%d[/color]" % [color, name_str, target_name, sign_str, delta]
 		if not reason.is_empty():
-			text += " [color=#888888](%s)[/color]" % reason
+			text += " [font_size=9][color=#888888](%s)[/color][/font_size]" % reason
 		_add_log(text)
-		EventBus.show_notification.emit("%s → %s %s%d" % [name_str, target_name, sign_str, delta], 3.0)
+		if delta != 0:
+			EventBus.show_notification.emit("%s → %s %s%d" % [name_str, target_name, sign_str, delta], 3.0)
 
 func _on_player_location_changed(location_name: String) -> void:
 	_location_label.text = "📍 " + location_name
