@@ -89,7 +89,7 @@ func _on_agent_updated(state: Dictionary) -> void:
 	for change in changes:
 		var target_id: String = change.get("target_id", "")
 		var target_name: String = _resolve_name(target_id)
-		var delta: int = change.get("delta", 0)
+		var delta: int = change.get("affinity_delta", change.get("delta", 0))
 		var reason: String = change.get("reason", "")
 		var sign_str := "+" if delta > 0 else ""
 		var color := "#88ff88" if delta > 0 else "#ff8888"
@@ -139,15 +139,21 @@ func _on_tick_pressed() -> void:
 const PLAYER_SAVE_PATH := "user://player_config.json"
 
 func _resolve_name(agent_id: String) -> String:
-	# 玩家（匹配 id 或 name）
-	var player_id: String = GameState.player_config.get("id", "player")
+	if agent_id.is_empty():
+		return "?"
+	# 玩家（匹配 id 或 name，或包含玩家名的拼音变体）
+	var player_id: String = GameState.player_config.get("id", "")
 	var player_name: String = GameState.player_config.get("name", "玩家")
 	if agent_id == player_id or agent_id == "player" or agent_id == player_name:
 		return player_name
-	# NPC
+	# NPC（按 id 查）
 	var cfg: Dictionary = GameState.get_agent_config(agent_id)
 	if not cfg.is_empty():
 		return cfg.get("name", agent_id)
+	# 兜底：如果 target_id 看起来像拼音且不在 NPC 列表里，可能是玩家
+	if agent_id.contains("_") and not agent_id.contains(" "):
+		# 大概率是 LLM 生成的玩家拼音 ID
+		return player_name
 	return agent_id
 
 func save_player_config(config: Dictionary) -> void:
