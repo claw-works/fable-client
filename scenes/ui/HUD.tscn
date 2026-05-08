@@ -1,0 +1,89 @@
+[gd_scene load_steps=2 format=3 uid="uid://hud"]
+
+[ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="1"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_right = 1.0
+offset_bottom = 32.0
+theme_override_constants/separation = 16
+
+[node name="ConnectionDot" type="ColorRect" parent="TopBar"]
+custom_minimum_size = Vector2(12, 12)
+size_flags_vertical = 4
+color = Color(1, 0, 0, 1)
+
+[node name="TimeLabel" type="Label" parent="TopBar"]
+text = "Day1 08:00"
+theme_override_font_sizes/font_size = 14
+
+[node name="LocationLabel" type="Label" parent="TopBar"]
+text = "📍 —"
+theme_override_font_sizes/font_size = 14
+
+[node name="TickLabel" type="Label" parent="TopBar"]
+text = "Tick 0"
+theme_override_font_sizes/font_size = 14
+
+[node name="EventLog" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -220.0
+offset_right = 340.0
+offset_bottom = -40.0
+bbcode_enabled = true
+scroll_following = true
+theme_override_font_sizes/normal_font_size = 11
+
+[node name="ControlBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -36.0
+offset_right = 300.0
+offset_bottom = -8.0
+theme_override_constants/separation = 8
+
+[node name="StartButton" type="Button" parent="ControlBar"]
+text = "▶ 开始"
+custom_minimum_size = Vector2(80, 0)
+
+[node name="StopButton" type="Button" parent="ControlBar"]
+text = "⏸ 暂停"
+custom_minimum_size = Vector2(80, 0)
+disabled = true
+
+[node name="TickButton" type="Button" parent="ControlBar"]
+text = "⏭ 单步"
+custom_minimum_size = Vector2(80, 0)
+
+[node name="Notification" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.15
+anchor_right = 0.5
+anchor_bottom = 0.15
+offset_left = -150.0
+offset_right = 150.0
+offset_bottom = 28.0
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+modulate = Color(1, 1, 0.6, 1)
+visible = false
+
+[node name="JoinPanel" parent="." instance=ExtResource("res://scenes/ui/JoinPanel.tscn")]
+visible = false

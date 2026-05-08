@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://dialogue_ui"]
+
+[ext_resource type="Script" path="res://scripts/ui/DialogueUI.gd" id="1"]
+
+[node name="DialogueUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+visible = false
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -280.0
+offset_right = 320.0
+offset_bottom = -8.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NPCName" type="Label" parent="Panel/VBox"]
+text = "NPC"
+theme_override_font_sizes/font_size = 16
+modulate = Color(1.0, 0.85, 0.3, 1.0)
+
+[node name="DialogueLog" type="RichTextLabel" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 140)
+bbcode_enabled = true
+scroll_following = true
+theme_override_font_sizes/normal_font_size = 13
+
+[node name="InputRow" type="HBoxContainer" parent="Panel/VBox"]
+theme_override_constants/separation = 6
+
+[node name="InputField" type="LineEdit" parent="Panel/VBox/InputRow"]
+size_flags_horizontal = 3
+placeholder_text = "说点什么..."
+theme_override_font_sizes/font_size = 13
+
+[node name="SendButton" type="Button" parent="Panel/VBox/InputRow"]
+text = "发送"
+custom_minimum_size = Vector2(60, 0)
+
+[node name="EndButton" type="Button" parent="Panel/VBox"]
+text = "结束对话"
+modulate = Color(0.8, 0.5, 0.5, 1.0)

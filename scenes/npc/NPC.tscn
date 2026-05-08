@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://npc"]
+
+[ext_resource type="Script" path="res://scripts/npc/NPC.gd" id="1"]
+
+[node name="NPC" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1")
+
+[node name="Sprite" type="ColorRect" parent="."]
+size = Vector2(28, 36)
+position = Vector2(-14, -36)
+color = Color(0.5, 0.5, 0.8, 1.0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = CapsuleShape2D(new("CapsuleShape2D", {"radius": 14.0, "height": 36.0}))
+position = Vector2(0, -18)
+
+[node name="NameLabel" type="Label" parent="."]
+position = Vector2(-30, -52)
+size = Vector2(60, 16)
+horizontal_alignment = 1
+text = "NPC"
+theme_override_font_sizes/font_size = 11
+
+[node name="EmotionLabel" type="Label" parent="."]
+position = Vector2(-10, -68)
+size = Vector2(20, 20)
+text = "😐"
+theme_override_font_sizes/font_size = 14
+visible = false
+
+[node name="DialogueBubble" type="Control" parent="."]
+position = Vector2(-80, -110)
+size = Vector2(160, 60)
+visible = false
+
+[node name="BubbleBackground" type="ColorRect" parent="DialogueBubble"]
+size = Vector2(160, 60)
+color = Color(0.1, 0.1, 0.1, 0.85)
+
+[node name="Label" type="Label" parent="DialogueBubble"]
+position = Vector2(6, 4)
+size = Vector2(148, 52)
+text = ""
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 11
+
+[node name="InteractArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+monitoring = true
