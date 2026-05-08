@@ -82,16 +82,13 @@ func _on_agent_updated(state: Dictionary) -> void:
 	# 想法（上帝视角，小字）
 	var thought: String = state.get("inner_thought", "")
 	if not thought.is_empty():
-		_add_log("[font_size=9][color=#666666][i]（%s心想：%s）[/i][/color][/font_size]" % [name_str, thought])
+		_add_log("[color=#666666][i]  （%s心想：%s）[/i][/color]" % [name_str, thought])
 
 	# 关系变化
 	var changes: Array = state.get("relation_changes", [])
 	for change in changes:
 		var target_id: String = change.get("target_id", "")
-		var target_cfg: Dictionary = GameState.get_agent_config(target_id)
-		var target_name: String = target_cfg.get("name", change.get("target_name", target_id))
-		if target_id == "player":
-			target_name = GameState.player_config.get("name", "玩家")
+		var target_name: String = _resolve_name(target_id)
 		var delta: int = change.get("delta", 0)
 		var reason: String = change.get("reason", "")
 		var sign_str := "+" if delta > 0 else ""
@@ -100,7 +97,7 @@ func _on_agent_updated(state: Dictionary) -> void:
 			color = "#aaaaaa"
 		var text := "[color=%s]💫 %s 对 %s 的好感度 %s%d[/color]" % [color, name_str, target_name, sign_str, delta]
 		if not reason.is_empty():
-			text += " [font_size=9][color=#888888](%s)[/color][/font_size]" % reason
+			text += " [color=#888888](%s)[/color]" % reason
 		_add_log(text)
 		if delta != 0:
 			EventBus.show_notification.emit("%s → %s %s%d" % [name_str, target_name, sign_str, delta], 3.0)
@@ -140,6 +137,17 @@ func _on_tick_pressed() -> void:
 	FableAPI.tick_once()
 
 const PLAYER_SAVE_PATH := "user://player_config.json"
+
+func _resolve_name(agent_id: String) -> String:
+	# 玩家
+	var player_id: String = GameState.player_config.get("id", "player")
+	if agent_id == player_id or agent_id == "player":
+		return GameState.player_config.get("name", "玩家")
+	# NPC
+	var cfg: Dictionary = GameState.get_agent_config(agent_id)
+	if not cfg.is_empty():
+		return cfg.get("name", agent_id)
+	return agent_id
 
 func save_player_config(config: Dictionary) -> void:
 	var f := FileAccess.open(PLAYER_SAVE_PATH, FileAccess.WRITE)
