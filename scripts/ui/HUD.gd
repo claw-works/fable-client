@@ -139,10 +139,11 @@ func _on_tick_pressed() -> void:
 const PLAYER_SAVE_PATH := "user://player_config.json"
 
 func _resolve_name(agent_id: String) -> String:
-	# 玩家
+	# 玩家（匹配 id 或 name）
 	var player_id: String = GameState.player_config.get("id", "player")
-	if agent_id == player_id or agent_id == "player":
-		return GameState.player_config.get("name", "玩家")
+	var player_name: String = GameState.player_config.get("name", "玩家")
+	if agent_id == player_id or agent_id == "player" or agent_id == player_name:
+		return player_name
 	# NPC
 	var cfg: Dictionary = GameState.get_agent_config(agent_id)
 	if not cfg.is_empty():

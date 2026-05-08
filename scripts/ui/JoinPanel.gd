@@ -29,7 +29,7 @@ func _on_join_pressed() -> void:
 	var init_loc := _location_option.get_item_text(loc_idx) if loc_idx >= 0 else "茶馆"
 
 	var config := {
-		"id": "player",
+		"id": name_str,
 		"name": name_str,
 		"occupation": _occupation_input.text.strip_edges() if not _occupation_input.text.is_empty() else "旅人",
 		"personality": _personality_input.text.strip_edges() if not _personality_input.text.is_empty() else "好奇，随和",
