@@ -94,3 +94,8 @@ func get_agent_config(agent_id: String) -> Dictionary:
 ## 获取地点配置（含坐标）
 func get_location(name: String) -> Dictionary:
 	return location_map.get(name, {})
+
+## 更新地点坐标（客户端自动布局时使用）
+func update_location_coords(name: String, data: Dictionary) -> void:
+	if location_map.has(name):
+		location_map[name].merge(data, true)

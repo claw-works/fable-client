@@ -35,6 +35,9 @@ func _build_map(config: Dictionary) -> void:
 
 	var locations: Array = config.get("locations", [])
 
+	# 如果后端没提供坐标，自动生成环形布局
+	_auto_layout(locations)
+
 	# 先画连线（在地点节点下层）
 	var drawn_connections: Dictionary = {}
 	for loc in locations:
@@ -57,10 +60,36 @@ func _build_map(config: Dictionary) -> void:
 	# 再创建地点节点
 	for loc in locations:
 		var node: Node2D = LOCATION_SCENE.instantiate()
-		node.setup(loc)
 		node.position = Vector2(loc.get("x", 0.0), loc.get("y", 0.0))
 		add_child(node)
+		node.setup(loc)
 		_location_nodes[loc.get("name", "")] = node
+
+## 自动环形布局：当后端未提供坐标时生成
+func _auto_layout(locations: Array) -> void:
+	if locations.is_empty():
+		return
+	# 检查是否已有坐标
+	var first: Dictionary = locations[0]
+	if first.has("x") and first.get("x", 0.0) != 0.0:
+		return
+
+	var count := locations.size()
+	var center := Vector2(500, 350)
+	var radius := 200.0 + count * 20.0
+	var loc_w := 140.0
+	var loc_h := 100.0
+
+	for i in range(count):
+		var angle := (TAU * i / count) - PI * 0.5
+		var x := center.x + cos(angle) * radius - loc_w * 0.5
+		var y := center.y + sin(angle) * radius - loc_h * 0.5
+		locations[i]["x"] = x
+		locations[i]["y"] = y
+		locations[i]["width"] = loc_w
+		locations[i]["height"] = loc_h
+		# 同步到 GameState
+		GameState.update_location_coords(locations[i].get("name", ""), locations[i])
 
 func _location_center(loc: Dictionary) -> Vector2:
 	return Vector2(
@@ -95,13 +124,13 @@ func _build_npcs(agents: Array) -> void:
 
 	for agent_cfg in agents:
 		var node: Node2D = NPC_SCENE.instantiate()
-		node.setup(agent_cfg)
 		# 初始位置：放在初始地点中心
 		var init_loc: String = agent_cfg.get("init_location", "")
 		var loc_data: Dictionary = GameState.get_location(init_loc)
 		if not loc_data.is_empty():
 			node.position = _location_center(loc_data) + _npc_offset(agent_cfg.get("id", ""))
 		add_child(node)
+		node.setup(agent_cfg)
 		_npc_nodes[agent_cfg.get("id", "")] = node
 
 ## 同地点多个 NPC 错开显示，避免重叠

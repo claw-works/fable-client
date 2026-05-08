@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://player"]
+[gd_scene load_steps=3 format=3 uid="uid://player"]
 
 [ext_resource type="Script" path="res://scripts/player/Player.gd" id="1"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
+radius = 14.0
+height = 36.0
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 1
@@ -13,7 +17,7 @@ position = Vector2(-14, -36)
 color = Color(1.0, 1.0, 1.0, 1.0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = CapsuleShape2D(new("CapsuleShape2D", {"radius": 14.0, "height": 36.0}))
+shape = SubResource("CapsuleShape2D_player")
 position = Vector2(0, -18)
 
 [node name="NameLabel" type="Label" parent="."]

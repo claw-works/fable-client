@@ -43,7 +43,15 @@ func _process(delta: float) -> void:
 			_notification.visible = false
 
 func _on_world_loaded(_config: Dictionary) -> void:
-	# 世界加载完成后显示加入面板
+	# 尝试从本地存档自动加入
+	var saved := _load_player_config()
+	if not saved.is_empty():
+		var ok: bool = await FableAPI.player_join(saved)
+		if ok:
+			var player := get_tree().get_first_node_in_group("player")
+			if player and player.has_method("setup"):
+				player.setup(saved)
+			return
 	_join_panel.visible = true
 
 func _on_tick_started(tick: int, game_time: String) -> void:
@@ -59,10 +67,36 @@ func _on_world_event(text: String) -> void:
 		_add_log(text)
 
 func _on_agent_updated(state: Dictionary) -> void:
+	var name_str: String = state.get("name", "?")
+
+	# 动作
+	var action: String = state.get("action", "")
+	if not action.is_empty():
+		_add_log("[color=#aaaaaa]%s %s[/color]" % [name_str, action])
+
+	# 对话
 	var dialogue: Variant = state.get("dialogue")
 	if dialogue != null and str(dialogue) != "":
-		var name_str: String = state.get("name", "?")
 		_add_log("[color=#f0c060]%s：[/color]%s" % [name_str, str(dialogue)])
+
+	# 想法（上帝视角）
+	var thought: String = state.get("inner_thought", "")
+	if not thought.is_empty():
+		_add_log("[color=#666666][i]（%s心想：%s）[/i][/color]" % [name_str, thought])
+
+	# 关系变化
+	var changes: Array = state.get("relation_changes", [])
+	for change in changes:
+		var target_name: String = change.get("target_name", change.get("target_id", "?"))
+		var delta: int = change.get("delta", 0)
+		var reason: String = change.get("reason", "")
+		var sign_str := "+" if delta > 0 else ""
+		var color := "#88ff88" if delta > 0 else "#ff8888"
+		var text := "[color=%s]💫 %s 对 %s 的好感度 %s%d[/color]" % [color, name_str, target_name, sign_str, delta]
+		if not reason.is_empty():
+			text += " [color=#888888](%s)[/color]" % reason
+		_add_log(text)
+		EventBus.show_notification.emit("%s → %s %s%d" % [name_str, target_name, sign_str, delta], 3.0)
 
 func _on_player_location_changed(location_name: String) -> void:
 	_location_label.text = "📍 " + location_name
@@ -97,3 +131,21 @@ func _on_stop_pressed() -> void:
 
 func _on_tick_pressed() -> void:
 	FableAPI.tick_once()
+
+const PLAYER_SAVE_PATH := "user://player_config.json"
+
+func save_player_config(config: Dictionary) -> void:
+	var f := FileAccess.open(PLAYER_SAVE_PATH, FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(config))
+
+func _load_player_config() -> Dictionary:
+	if not FileAccess.file_exists(PLAYER_SAVE_PATH):
+		return {}
+	var f := FileAccess.open(PLAYER_SAVE_PATH, FileAccess.READ)
+	if not f:
+		return {}
+	var json := JSON.new()
+	if json.parse(f.get_as_text()) != OK:
+		return {}
+	return json.get_data()

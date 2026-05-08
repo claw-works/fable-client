@@ -16,10 +16,6 @@ const DEFAULT_COLOR := Color(0.55, 0.55, 0.55, 0.85)
 var _data: Dictionary = {}
 var _is_player_inside: bool = false
 
-@onready var _bg: ColorRect = $Background
-@onready var _label: Label = $Label
-@onready var _area: Area2D = $Area2D
-
 func setup(location_data: Dictionary) -> void:
 	_data = location_data
 	var w: float = location_data.get("width", 120.0)
@@ -28,36 +24,41 @@ func setup(location_data: Dictionary) -> void:
 	var color: Color = TYPE_COLORS.get(loc_type, DEFAULT_COLOR)
 
 	# 背景色块
-	_bg.size = Vector2(w, h)
-	_bg.color = color
+	var bg: ColorRect = $Background
+	bg.size = Vector2(w, h)
+	bg.color = color
 
 	# 名称标签
-	_label.text = location_data.get("name", "?")
-	_label.position = Vector2(w * 0.5, h + 4.0)
+	var lbl: Label = $Label
+	lbl.text = location_data.get("name", "?")
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.position = Vector2(0, h + 4.0)
+	lbl.size = Vector2(w, 20.0)
 
 	# 碰撞区域
+	var area: Area2D = $Area2D
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(w, h)
 	var col := CollisionShape2D.new()
 	col.shape = shape
 	col.position = Vector2(w * 0.5, h * 0.5)
-	_area.add_child(col)
+	area.add_child(col)
 
 	# 连接信号
-	_area.body_entered.connect(_on_body_entered)
-	_area.body_exited.connect(_on_body_exited)
+	area.body_entered.connect(_on_body_entered)
+	area.body_exited.connect(_on_body_exited)
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_is_player_inside = true
-		_bg.color = _bg.color.lightened(0.2)
+		$Background.color = $Background.color.lightened(0.2)
 		EventBus.player_moved_to_location.emit(_data.get("name", ""))
 
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_is_player_inside = false
 		var loc_type: String = _data.get("type", "")
-		_bg.color = TYPE_COLORS.get(loc_type, DEFAULT_COLOR)
+		$Background.color = TYPE_COLORS.get(loc_type, DEFAULT_COLOR)
 
 func get_location_name() -> String:
 	return _data.get("name", "")

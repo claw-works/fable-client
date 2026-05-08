@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://npc"]
+[gd_scene load_steps=3 format=3 uid="uid://npc"]
 
 [ext_resource type="Script" path="res://scripts/npc/NPC.gd" id="1"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_npc"]
+radius = 14.0
+height = 36.0
 
 [node name="NPC" type="CharacterBody2D"]
 collision_layer = 4
@@ -13,7 +17,7 @@ position = Vector2(-14, -36)
 color = Color(0.5, 0.5, 0.8, 1.0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = CapsuleShape2D(new("CapsuleShape2D", {"radius": 14.0, "height": 36.0}))
+shape = SubResource("CapsuleShape2D_npc")
 position = Vector2(0, -18)
 
 [node name="NameLabel" type="Label" parent="."]
@@ -50,3 +54,20 @@ theme_override_font_sizes/font_size = 11
 collision_layer = 0
 collision_mask = 1
 monitoring = true
+
+[node name="ThoughtBubble" type="Control" parent="."]
+position = Vector2(16, -90)
+size = Vector2(120, 40)
+visible = false
+
+[node name="BG" type="ColorRect" parent="ThoughtBubble"]
+size = Vector2(120, 40)
+color = Color(0.2, 0.2, 0.3, 0.75)
+
+[node name="Label" type="Label" parent="ThoughtBubble"]
+position = Vector2(4, 2)
+size = Vector2(112, 36)
+text = ""
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 9
+modulate = Color(0.7, 0.7, 0.8, 1.0)

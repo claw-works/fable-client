@@ -39,6 +39,10 @@ func _on_join_pressed() -> void:
 
 	var ok: bool = await FableAPI.player_join(config)
 	if ok:
+		# 保存到本地，下次自动加入
+		var hud := get_parent()
+		if hud.has_method("save_player_config"):
+			hud.save_player_config(config)
 		# 通知玩家节点初始化
 		var player := get_tree().get_first_node_in_group("player")
 		if player and player.has_method("setup"):

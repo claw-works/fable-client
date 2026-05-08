@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://hud"]
+[gd_scene load_steps=3 format=3 uid="uid://hud"]
 
 [ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/JoinPanel.tscn" id="2"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -85,5 +86,5 @@ theme_override_font_sizes/font_size = 16
 modulate = Color(1, 1, 0.6, 1)
 visible = false
 
-[node name="JoinPanel" parent="." instance=ExtResource("res://scenes/ui/JoinPanel.tscn")]
+[node name="JoinPanel" parent="." instance=ExtResource("2")]
 visible = false

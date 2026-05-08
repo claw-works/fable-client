@@ -17,6 +17,7 @@ signal player_state_changed(player_state: Dictionary)
 signal player_moved_to_location(location_name: String)
 signal player_near_npc(npc_id: String, npc_name: String)
 signal player_left_npc_range()
+signal player_interact_pressed(npc_id: String, npc_name: String, location_name: String)
 
 # 对话事件
 signal conversation_started(npc_id: String, npc_name: String)
